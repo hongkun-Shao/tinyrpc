@@ -87,16 +87,16 @@ void Logger::InitGlobalLogger(){
 }
 
 void Logger::PushLog(const std::string & msg){
-    //lock
+    Locker<Mutex> lock(m_mutex_);
     m_log_buffer_.push(msg);
-    //unlock
+    lock.unlock();
 }
 
 void Logger::Log(){
-    //lock
+    Locker<Mutex> lock(m_mutex_);
     std::queue<std::string> temp;
     m_log_buffer_.swap(temp);
-    //unlock
+    lock.unlock();
 
     while(!temp.empty()){
         std::string msg = temp.front();

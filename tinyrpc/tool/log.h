@@ -105,7 +105,7 @@ private:
     LogLevel m_set_level_;                  // limit the log whose level < set_level
     std::queue<std::string> m_log_buffer_;  // log queue
 
-    //Mutex
+    Mutex m_mutex_;
 };
 
 
