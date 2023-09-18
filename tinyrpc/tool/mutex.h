@@ -40,7 +40,7 @@ public:
     }
 
     void lock() {
-        if (!m_is_lock) {
+        if (!m_is_lock_) {
             m_mutex_.lock();
         }
     }

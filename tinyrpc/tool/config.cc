@@ -33,8 +33,8 @@ void Config::SetGlobalConfig(const char* xmlfile) {
 
 Config::Config(const char* xmlfile){
     TiXmlDocument * xml_document = new TiXmlDocument();
-    bool rt = xml_document->LoadFile(xmlfile);
-    if (!rt) {
+    bool res = xml_document->LoadFile(xmlfile);
+    if (!res) {
         printf("Start tinyrpc server error, failed to read config file %s, error info[%s] \n", xmlfile, xml_document->ErrorDesc());
         exit(0);
     }
