@@ -9,6 +9,7 @@
 #include "tinyrpc/tool/config.h"
 #include "tinyrpc/net/fd_event.h"
 #include "tinyrpc/net/eventloop.h"
+#include "tinyrpc/net/timer_event.h"
 
 int main (){
     tinyrpc::Config::SetGlobalConfig("../conf/tinyrpc.xml");
@@ -51,6 +52,13 @@ int main (){
     });
     eventloop->AddEpollEvent(&event);
 
+    int i = 0;
+    tinyrpc::TimerEvent::s_ptr timer_event = std::make_shared<tinyrpc::TimerEvent>(
+        1000, true, [&i](){
+            INFOLOG("trigger timer event, count = %d", i ++);
+        }
+    );
+    eventloop->AddTimerEvent(timer_event);
     eventloop->Loop();
 
     return 0;

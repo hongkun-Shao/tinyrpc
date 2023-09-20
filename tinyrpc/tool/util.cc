@@ -1,3 +1,6 @@
+#include <unistd.h>
+#include <sys/time.h>
+#include <sys/types.h>
 #include <sys/syscall.h>
 #include "tinyrpc/tool/util.h"
 
@@ -20,4 +23,12 @@ pid_t GetThreadId(){
     }
     return syscall(SYS_gettid);
 }
+
+int64_t GetNowMs(){
+    timeval ts;
+    gettimeofday(&ts, NULL);
+
+    return ts.tv_sec * 1000 + ts.tv_usec / 1000;
+}
+
 } // namespace tinyrpc

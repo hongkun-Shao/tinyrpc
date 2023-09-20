@@ -7,4 +7,6 @@ pid_t GetPid();
 
 pid_t GetThreadId();
 
+int64_t GetNowMs();
+
 }

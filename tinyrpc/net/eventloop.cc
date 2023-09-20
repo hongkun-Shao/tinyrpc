@@ -58,7 +58,9 @@ EventLoop::EventLoop(){
     }
 
     InitWakeUpFdEevent();
-    INFOLOG("succ create event loop in thread %d", m_thread_id_);
+    InitTimer();
+
+    INFOLOG("success create event loop in thread %d", m_thread_id_);
     t_current_eventloop = this;
 }
 
@@ -91,7 +93,7 @@ void EventLoop::Loop(){
         DEBUGLOG("now end epoll_wait, res = %d", res);
 
         if(res < 0){
-            ERRORLOG("epoll_wait error, errno =", errno);
+            ERRORLOG("epoll_wait error, errno = %d, error = %s", errno, strerror(errno));
         }else{
             for(int i = 0; i < res; ++ i){
                 epoll_event trigger_event = result_events[i];
@@ -159,6 +161,14 @@ void EventLoop::AddTask(std::function<void()> cb, bool is_wake_up){
     }
 }
 
+void EventLoop::AddTimerEvent(TimerEvent::s_ptr event){
+    m_timer_->AddTimerEvent(event);
+}
+
+void EventLoop::DeleteTimerEvent(TimerEvent::s_ptr event){
+    m_timer_->DeleteTimerEvent(event);
+}
+
 void EventLoop::DealWakeup(){
     //don't deal
 }
@@ -183,5 +193,9 @@ void EventLoop::InitWakeUpFdEevent(){
     AddEpollEvent(m_wakeup_fd_event_);
 }
 
+void EventLoop::InitTimer(){
+    m_timer_ = new Timer();
+    AddEpollEvent(m_timer_);
+}
 
 }

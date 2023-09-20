@@ -9,6 +9,10 @@ FdEvent::FdEvent(int fd) : m_fd_(fd){
     memset(&m_listen_events_, 0, sizeof(m_listen_events_));
 }
 
+FdEvent::FdEvent(){
+    memset(&m_listen_events_, 0, sizeof(m_listen_events_));
+}
+
 FdEvent::~FdEvent(){
 
 }

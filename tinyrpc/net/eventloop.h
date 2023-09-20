@@ -6,6 +6,7 @@
 #include <pthread.h>
 #include <functional>
 
+#include "tinyrpc/net/timer.h"
 #include "tinyrpc/tool/mutex.h"
 #include "tinyrpc/net/fd_event.h"
 #include "tinyrpc/net/wakeup_fd_event.h"
@@ -32,10 +33,16 @@ public:
 
     void AddTask(std::function<void()> cb, bool is_wake_up = false);
 
+    void AddTimerEvent(TimerEvent::s_ptr event);
+
+    void DeleteTimerEvent(TimerEvent::s_ptr event);
+
 private:
     void DealWakeup();
 
     void InitWakeUpFdEevent();
+
+    void InitTimer();
 
 private:
     pid_t m_thread_id_;                                     //thread where eventloop in 
@@ -44,6 +51,8 @@ private:
     int m_wakeup_fd_ {0};
 
     WakeUpFdEvent * m_wakeup_fd_event_ {nullptr};
+    
+    Timer * m_timer_ {nullptr};
 
     bool m_stop_flag_ {false};                              //stop flag
 
