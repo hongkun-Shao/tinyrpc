@@ -17,7 +17,7 @@ public:
 
     FdEvent();
     
-    ~FdEvent();
+    virtual ~FdEvent();
 
     std::function<void()> Handler(TriggerEvent event_type);
     
