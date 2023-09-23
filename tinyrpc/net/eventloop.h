@@ -37,6 +37,9 @@ public:
 
     void DeleteTimerEvent(TimerEvent::s_ptr event);
 
+public:
+    static EventLoop* GetCurrentEventLoop();
+
 private:
     void DealWakeup();
 
