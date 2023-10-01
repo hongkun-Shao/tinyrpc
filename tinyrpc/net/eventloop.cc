@@ -73,6 +73,7 @@ EventLoop::~EventLoop(){
 }
 
 void EventLoop::Loop(){
+    m_is_looping_ = true;
     while(!m_stop_flag_){
         Locker<Mutex> lock(m_mutex_);
         std::queue<std::function<void()>> temp_tasks;
@@ -204,6 +205,10 @@ void EventLoop::InitWakeUpFdEevent(){
 void EventLoop::InitTimer(){
     m_timer_ = new Timer();
     AddEpollEvent(m_timer_);
+}
+
+bool EventLoop::IsLooping(){
+    return m_is_looping_;
 }
 
 }

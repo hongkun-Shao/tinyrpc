@@ -1,3 +1,4 @@
+#include <fcntl.h>
 #include <string.h>
 
 #include "tinyrpc/tool/log.h"
@@ -15,6 +16,14 @@ FdEvent::FdEvent(){
 
 FdEvent::~FdEvent(){
 
+}
+
+void FdEvent::SetNonBlock(){
+    int flag = fcntl(m_fd_, F_GETFL, 0);
+    if(flag & O_NONBLOCK){
+        return;
+    }
+    fcntl(m_fd_, F_SETFL, flag | O_NONBLOCK);
 }
 
 std::function<void()> FdEvent::Handler(TriggerEvent event_typ){
@@ -35,6 +44,14 @@ void FdEvent::Listen(TriggerEvent event_type, std::function<void()> callback){
     }
 
     m_listen_events_.data.ptr = this;
+}
+
+void FdEvent::Cancle(TriggerEvent event_type){
+  if (event_type == TriggerEvent::IN_EVENT){
+    m_listen_events_.events &= (~EPOLLIN);
+  }else{
+    m_listen_events_.events &= (~EPOLLOUT);
+  }
 }
 
 }

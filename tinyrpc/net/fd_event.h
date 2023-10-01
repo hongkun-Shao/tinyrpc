@@ -19,9 +19,14 @@ public:
     
     virtual ~FdEvent();
 
+    void SetNonBlock();
+    
     std::function<void()> Handler(TriggerEvent event_type);
     
     void Listen(TriggerEvent event_type, std::function<void()> callback);
+
+    //cancle listen
+    void Cancle(TriggerEvent event_type);
 
     int get_fd() const{
         return m_fd_;
