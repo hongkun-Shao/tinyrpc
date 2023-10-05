@@ -1,5 +1,7 @@
+#include <string.h>
 #include <unistd.h>
 #include <sys/time.h>
+#include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/syscall.h>
 #include "tinyrpc/tool/util.h"
@@ -29,6 +31,12 @@ int64_t GetNowMs(){
     gettimeofday(&ts, NULL);
 
     return ts.tv_sec * 1000 + ts.tv_usec / 1000;
+}
+
+int32_t GetInt32FromNetByte(const char * buf){
+    int32_t res;
+    memcpy(&res, buf, sizeof(res));
+    return ntohl(res);
 }
 
 } // namespace tinyrpc

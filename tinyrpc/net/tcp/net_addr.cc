@@ -1,6 +1,4 @@
-
 #include <string.h>
-
 #include "tinyrpc/tool/log.h"
 #include "tinyrpc/net/tcp/net_addr.h"
 

@@ -24,19 +24,18 @@
 
 #define DELETE_TO_EPOLL()                                   \
     auto it = m_listen_fds.find(event->get_fd());           \
+    if (it == m_listen_fds.end()) {                         \
+      return;                                               \
+    }                                                       \
     int op = EPOLL_CTL_DEL;                                 \
-    if(it == m_listen_fds.end()){                           \
-        return;                                             \
-    }                                                       \
     epoll_event temp = event->get_epoll_event();            \
-    INFOLOG("epoll_event.events = %d", (int)temp.events);   \
-    int res = epoll_ctl(m_epoll_fd_, op, event->get_fd(), &temp);    \
-    if(res == -1){                                          \
-        ERRORLOG("failed epoll_ctl when delete fd, errno=%d, error=%s", errno, strerror(errno));   \
+    int res = epoll_ctl(m_epoll_fd_, op, event->get_fd(), NULL);   \
+    if (res == -1) {                                        \
+      ERRORLOG("failed epoll_ctl when add fd, errno=%d, error=%s", errno, strerror(errno)); \
     }                                                       \
-    m_listen_fds.erase(event->get_fd());                    \
-    DEBUGLOG("delete event success, fd[%d]", event->get_fd());      \
-    \
+    m_listen_fds.erase(event->get_fd()); \
+    DEBUGLOG("delete event success, fd[%d]", event->get_fd()); \
+
 
 namespace tinyrpc{
 static thread_local EventLoop * t_current_eventloop = nullptr;
@@ -66,9 +65,13 @@ EventLoop::EventLoop(){
 
 EventLoop::~EventLoop(){
     close(m_epoll_fd_);
-    if(m_wakeup_fd_){
+    if(m_wakeup_fd_event_){
         delete m_wakeup_fd_event_;
         m_wakeup_fd_event_ = nullptr;
+    }
+    if(m_timer_){
+        delete m_timer_;
+        m_timer_ = nullptr;
     }
 }
 

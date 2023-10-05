@@ -4,8 +4,9 @@
 
 #include "tinyrpc/tool/log.h"
 #include "tinyrpc/net/eventloop.h"
-#include "tinyrpc/net/tcp/tcp_client.h"
 #include "tinyrpc/net/fd_event_pool.h"
+#include "tinyrpc/net/tcp/tcp_client.h"
+
 
 namespace tinyrpc{
 
@@ -20,7 +21,7 @@ TcpClient::TcpClient(NetAddr::s_ptr peer_addr) : m_peer_addr_(peer_addr){
     m_fd_event_ = FdEventPool::get_fd_event_pool()->get_fd_event(m_fd_);
     m_fd_event_->SetNonBlock();
 
-    m_connection_ = std::make_shared<TcpConnection>(m_event_loop_, m_fd_, 128, peer_addr);
+    m_connection_ = std::make_shared<TcpConnection>(m_event_loop_, m_fd_, 128, peer_addr, TcpConnectionByClient);
     m_connection_->set_connection_type(TcpConnectionByClient);  
 }
 
@@ -46,16 +47,22 @@ void TcpClient::Connect(std::function<void()> done){
                 int error = 0;
                 socklen_t error_len = sizeof(error);
                 getsockopt(m_fd_, SOL_SOCKET, SO_ERROR, &error, &error_len);
+                bool is_connect_succ = false;
                 if(error == 0){
                     DEBUGLOG("connect [%s] success", m_peer_addr_->ToString().c_str());
-                    if(done){
-                        done();
-                    }
+                    is_connect_succ = true;
+                    m_connection_->set_state(Connected);
                 }else{
                     ERRORLOG("connect error, errno = %d, error = %s", errno, strerror(errno));    
                 }
                 m_fd_event_->Cancle(FdEvent::OUT_EVENT);
                 m_event_loop_->AddEpollEvent(m_fd_event_);
+
+                //only connect succ, do callback done
+                if(is_connect_succ && done){
+                    done();
+                }
+
             });
             m_event_loop_->AddEpollEvent(m_fd_event_);
             if(!m_event_loop_->IsLooping()){
@@ -68,12 +75,18 @@ void TcpClient::Connect(std::function<void()> done){
 }
 
 void TcpClient::WriteMessage(AbstractProtocol::s_ptr message, std::function<void(AbstractProtocol::s_ptr)> done){
-
+    // write message and done into buffer
+    // start listen write
+    m_connection_->PushSendMessage(message, done);
+    m_connection_->ListenWrite();
 }
 
 
-void TcpClient::ReadMessage(AbstractProtocol::s_ptr message, std::function<void(AbstractProtocol::s_ptr)> done){
-    
+void TcpClient::ReadMessage(const std::string & req_id, std::function<void(AbstractProtocol::s_ptr)> done){
+    // start listen read
+    // decode buffer data to get message object, check req_id equal req_id, if equal, do callback
+    m_connection_->PushReadMessage(req_id, done);
+    m_connection_->ListenRead();
 }
 
 }

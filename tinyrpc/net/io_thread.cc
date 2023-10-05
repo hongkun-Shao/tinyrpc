@@ -63,6 +63,8 @@ void * IOThread::Main(void * arg){
     thread->m_event_loop_->Loop();
 
     DEBUGLOG("IOThread %d end loop ", thread->m_thread_id_);
+
+    return nullptr;
 }
 
 }

@@ -4,7 +4,7 @@
 #include "tinyrpc/net/tcp/net_addr.h"
 #include "tinyrpc/net/eventloop.h"
 #include "tinyrpc/net/tcp/tcp_connection.h"
-#include "tinyrpc/net/abstract_protocol.h"
+#include "tinyrpc/net/coder/abstract_protocol.h"
 
 namespace tinyrpc{
 
@@ -24,7 +24,7 @@ public:
 
     // 异步的读取 message
     // 如果读取 message 成功，会调用 done 函数， 函数的入参就是 message 对象 
-    void ReadMessage(AbstractProtocol::s_ptr message, std::function<void(AbstractProtocol::s_ptr)> done);
+    void ReadMessage(const std::string & req_id, std::function<void(AbstractProtocol::s_ptr)> done);
 private:
     NetAddr::s_ptr m_peer_addr_;
     EventLoop * m_event_loop_ {nullptr};

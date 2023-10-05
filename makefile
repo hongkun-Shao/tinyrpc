@@ -1,7 +1,7 @@
-#########################ROCKET#########
+##################################
 # makefile
 # ikerli
-# 2022-05-23
+# 2023-10-2
 ##################################
 
 PATH_BIN = bin
@@ -9,9 +9,10 @@ PATH_LIB = lib
 PATH_OBJ = obj
 
 PATH_TINYRPC = tinyrpc
-PATH_TOOL = $(PATH_TINYRPC)/common
+PATH_TOOL = $(PATH_TINYRPC)/tool
 PATH_NET = $(PATH_TINYRPC)/net
 PATH_TCP = $(PATH_TINYRPC)/net/tcp
+PATH_CODER = $(PATH_TINYRPC)/net/coder
 
 PATH_TESTCASES = testcases
 
@@ -24,6 +25,7 @@ PATH_INSTALL_INC_ROOT = /usr/include
 PATH_INSTALL_INC_TOOL = $(PATH_INSTALL_INC_ROOT)/$(PATH_TOOL)
 PATH_INSTALL_INC_NET = $(PATH_INSTALL_INC_ROOT)/$(PATH_NET)
 PATH_INSTALL_INC_TCP = $(PATH_INSTALL_INC_ROOT)/$(PATH_TCP)
+PATH_INSTALL_INC_CODER = $(PATH_INSTALL_INC_ROOT)/$(PATH_CODER)
 
 
 # PATH_PROTOBUF = /usr/include/google
@@ -33,7 +35,7 @@ CXX := g++
 
 CXXFLAGS += -g -O0 -std=c++11 -Wall -Wno-deprecated -Wno-unused-but-set-variable
 
-CXXFLAGS += -I./ -I$(PATH_TINYRPC)	-I$(PATH_TOOL) -I$(PATH_NET) -I$(PATH_TCP)
+CXXFLAGS += -I./ -I$(PATH_TINYRPC)	-I$(PATH_TOOL) -I$(PATH_NET) -I$(PATH_TCP) -I$(PATH_CODER)
 
 LIBS += /usr/lib64/libprotobuf.a	/usr/lib/libtinyxml.a
 
@@ -41,6 +43,7 @@ LIBS += /usr/lib64/libprotobuf.a	/usr/lib/libtinyxml.a
 TOOL_OBJ := $(patsubst $(PATH_TOOL)/%.cc, $(PATH_OBJ)/%.o, $(wildcard $(PATH_TOOL)/*.cc))
 NET_OBJ := $(patsubst $(PATH_NET)/%.cc, $(PATH_OBJ)/%.o, $(wildcard $(PATH_NET)/*.cc))
 TCP_OBJ := $(patsubst $(PATH_TCP)/%.cc, $(PATH_OBJ)/%.o, $(wildcard $(PATH_TCP)/*.cc))
+CODER_OBJ := $(patsubst $(PATH_CODER)/%.cc, $(PATH_OBJ)/%.o, $(wildcard $(PATH_CODER)/*.cc))
 
 ALL_TESTS : $(PATH_BIN)/test_log $(PATH_BIN)/test_eventloop $(PATH_BIN)/test_tcp $(PATH_BIN)/test_client
 
@@ -61,7 +64,8 @@ $(PATH_BIN)/test_client: $(LIB_OUT)
 	$(CXX) $(CXXFLAGS) $(PATH_TESTCASES)/test_client.cc -o $@ $(LIB_OUT) $(LIBS) -ldl -pthread
 
 
-$(LIB_OUT): $(TOOL_OBJ) $(NET_OBJ) $(TCP_OBJ)
+
+$(LIB_OUT): $(TOOL_OBJ) $(NET_OBJ) $(TCP_OBJ) $(CODER_OBJ)
 	cd $(PATH_OBJ) && ar rcv libtinyrpc.a *.o && cp libtinyrpc.a ../lib/
 
 $(PATH_OBJ)/%.o : $(PATH_TOOL)/%.cc
@@ -74,6 +78,9 @@ $(PATH_OBJ)/%.o : $(PATH_NET)/%.cc
 $(PATH_OBJ)/%.o : $(PATH_TCP)/%.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+$(PATH_OBJ)/%.o : $(PATH_CODER)/%.cc
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
 # print something test
 # like this: make PRINT-PATH_BIN, and then will print variable PATH_BIN
 PRINT-% : ; @echo $* = $($*)
@@ -81,14 +88,15 @@ PRINT-% : ; @echo $* = $($*)
 
 # to clean 
 clean :
-	rm -f $(TOOL_OBJ) $(NET_OBJ) $(TESTCASES) $(TEST_CASE_OUT) $(PATH_LIB)/libtinyrpc.a $(PATH_OBJ)/libtinyrpc.a
+	rm -f $(TOOL_OBJ) $(NET_OBJ) $(TESTCASES) $(TEST_CASE_OUT) $(PATH_LIB)/libtinyrpc.a $(PATH_OBJ)/libtinyrpc.a $(PATH_OBJ)/*.o
 
 # install
 install:
-	mkdir -p $(PATH_INSTALL_INC_TOOL) $(PATH_INSTALL_INC_NET) \
-		&& cp $(PATH_TOOL)/*.h $(PATH_INSTALL_INC_TOOL) \
-		&& cp $(PATH_NET)/*.h $(PATH_INSTALL_INC_NET) \
-		&& cp $(PATH_TCP)/*.h $(PATH_INSTALL_INC_TCP) \
+	mkdir -p $(PATH_INSTALL_INC_TOOL) $(PATH_INSTALL_INC_NET) 	\
+		&& cp $(PATH_TOOL)/*.h $(PATH_INSTALL_INC_TOOL) 		\
+		&& cp $(PATH_NET)/*.h $(PATH_INSTALL_INC_NET) 			\
+		&& cp $(PATH_TCP)/*.h $(PATH_INSTALL_INC_TCP)			\
+		&& cp $(PATH_CODER)/*.h $(PATH_INSTALL_INC_CODER) 		\
 		&& cp $(LIB_OUT) $(PATH_INSTALL_LIB_ROOT)/
 
 

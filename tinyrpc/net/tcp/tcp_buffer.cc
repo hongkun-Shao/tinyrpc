@@ -31,6 +31,7 @@ void TcpBuffer::WriteToBuffer(const char * buf, int size){
         ResizeBuffer(new_size);
     }
     memcpy(&m_buffer_[m_write_index_], buf, size);
+    m_write_index_ += size;
 }
 
 void TcpBuffer::ReadFromBuffer(std::vector<char> & res, int size){
@@ -66,7 +67,7 @@ void TcpBuffer::AdjustBuffer(){
     if(m_read_index_ < int(m_buffer_.size() / 3)){
         return;
     }
-      std::vector<char> buffer(m_buffer_.size());
+    std::vector<char> buffer(m_buffer_.size());
     int count = GetReadSize();
 
     memcpy(&buffer[0], &m_buffer_[m_read_index_], count);

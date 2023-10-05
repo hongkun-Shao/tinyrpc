@@ -9,4 +9,7 @@ pid_t GetThreadId();
 
 int64_t GetNowMs();
 
+int32_t GetInt32FromNetByte(const char * buf);
+
+
 }

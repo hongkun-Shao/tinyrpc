@@ -32,14 +32,21 @@ void TcpServer::Init(){
     m_main_event_loop_->AddEpollEvent(m_listen_fd_event_);
 }
 
-void TcpServer::OnAccept(){
-    int client_fd = m_acceptor_->Accept();
-    //FdEvent client_fd_event(client_fd);
-    m_client_counts_ ++;
-    // TODO: add cleintfd to any IO thread
-    // m_io_thread_pool_->GetIOThread()->GetEventLoop()->AddEpollEvent(client_fd_event);
-    
-    INFOLOG("TcpServer succ get client, fd=%d", client_fd);
+void TcpServer::OnAccept() {
+  auto re = m_acceptor_->Accept();
+  int client_fd = re.first;
+  NetAddr::s_ptr peer_addr = re.second;
+
+  m_client_counts_++;
+  
+  // 把 cleintfd 添加到任意 IO 线程里面
+  IOThread* io_thread = m_io_thread_pool_->get_iothread();
+  TcpConnection::s_ptr connetion = std::make_shared<TcpConnection>(io_thread->get_eventloop(), client_fd, 128, peer_addr);
+  connetion->set_state(Connected);
+
+  m_client_.insert(connetion);
+
+  INFOLOG("TcpServer succ get client, fd=%d", client_fd);
 }
 
 }

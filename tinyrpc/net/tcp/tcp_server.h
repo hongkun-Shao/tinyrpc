@@ -1,8 +1,9 @@
 #ifndef TINYRPC_NET_TCP_TCP_SERVER_H
 #define TINYRPC_NET_TCP_TCP_SERVER_H
 
-
+#include <set>
 #include "tinyrpc/net/tcp/tcp_acceptor.h"
+#include "tinyrpc/net/tcp/tcp_connection.h"
 #include "tinyrpc/net/tcp/net_addr.h"
 #include "tinyrpc/net/eventloop.h"
 #include "tinyrpc/net/io_thread_pool.h"
@@ -35,6 +36,8 @@ private:
     FdEvent * m_listen_fd_event_;
 
     int m_client_counts_ {0};
+
+    std::set<TcpConnection::s_ptr> m_client_;
 };
 
 }
