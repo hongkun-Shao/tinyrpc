@@ -41,7 +41,7 @@ void TcpServer::OnAccept() {
   
   // 把 cleintfd 添加到任意 IO 线程里面
   IOThread* io_thread = m_io_thread_pool_->get_iothread();
-  TcpConnection::s_ptr connetion = std::make_shared<TcpConnection>(io_thread->get_eventloop(), client_fd, 128, peer_addr);
+  TcpConnection::s_ptr connetion = std::make_shared<TcpConnection>(io_thread->get_eventloop(), client_fd, 128, peer_addr, m_local_addr_);
   connetion->set_state(Connected);
 
   m_client_.insert(connetion);

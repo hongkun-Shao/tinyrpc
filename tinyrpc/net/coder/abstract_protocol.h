@@ -6,14 +6,14 @@
 
 namespace tinyrpc{
 
-struct AbstractProtocol : std::enable_shared_from_this<AbstractProtocol>{
+class AbstractProtocol : std::enable_shared_from_this<AbstractProtocol>{
 public:
   typedef std::shared_ptr<AbstractProtocol> s_ptr;
 
   virtual ~AbstractProtocol() {}
 
 public:
-  std::string m_req_id_;  //req_id, unique mask
+  std::string m_msg_id_;  //req_id, unique mask
 
 };
 

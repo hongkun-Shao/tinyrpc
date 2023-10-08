@@ -6,8 +6,8 @@
 #include "tinyrpc/net/coder/tinypb_coder.h"
 namespace tinyrpc{
     
-TcpConnection::TcpConnection(EventLoop* event_loop, int fd, int buffer_size, NetAddr::s_ptr peer_addr, TcpConnectionType type /*= TcpConnectionByServer*/)
-    : m_event_loop_(event_loop), m_peer_addr_(peer_addr), m_state_(NotConnected), m_fd_(fd), m_connection_type_(type) {
+TcpConnection::TcpConnection(EventLoop* event_loop, int fd, int buffer_size, NetAddr::s_ptr peer_addr, NetAddr::s_ptr local_addr, TcpConnectionType type /* = TcpConnectionByServer*/)
+                            : m_event_loop_(event_loop), m_peer_addr_(peer_addr), m_local_addr_(local_addr), m_state_(NotConnected), m_fd_(fd), m_connection_type_(type){
     m_in_buffer_ = std::make_shared<TcpBuffer>(buffer_size);
     m_out_buffer_ = std::make_shared<TcpBuffer>(buffer_size);
 
@@ -92,11 +92,12 @@ void TcpConnection::Excute(){
         for (size_t i = 0;  i < result.size(); ++i) {
             // 1. 针对每一个请求，调用 rpc 方法，获取响应 message
             // 2. 将响应 message 放入到发送缓冲区，监听可写事件回包
-            INFOLOG("success get request[%s] from client[%s]", result[i]->m_req_id_.c_str(), m_peer_addr_->ToString().c_str());
+            INFOLOG("success get request[%s] from client[%s]", result[i]->m_msg_id_.c_str(), m_peer_addr_->ToString().c_str());
 
             std::shared_ptr<TinyPBProtocol> message = std::make_shared<TinyPBProtocol>();
-            message->m_pb_data_ = "hello. this is tinyrpc test data";
-            message->m_req_id_ = result[i]->m_req_id_;
+            //message->m_pb_data_ = "hello. this is tinyrpc test data";
+            //message->m_msg_id_ = result[i]->m_msg_id_;
+            RpcDispatcher::GetRpcDispatcher()->dispatch(result[i], message, this);
             replay_messages.emplace_back(message);
         }
 
@@ -108,8 +109,8 @@ void TcpConnection::Excute(){
         m_coder_->Decode(res, m_in_buffer_);
 
         for(size_t i = 0; i < res.size(); ++ i){
-            std::string req_id = res[i]->m_req_id_;
-            auto it = m_read_dones_.find(req_id);
+            std::string msg_id = res[i]->m_msg_id_;
+            auto it = m_read_dones_.find(msg_id);
             if(it != m_read_dones_.end()){
                 it->second(res[i]);
             }
@@ -225,8 +226,8 @@ void TcpConnection::PushSendMessage(AbstractProtocol::s_ptr message, std::functi
     m_write_dones_.push_back(std::make_pair(message, done));
 }
 
-void TcpConnection::PushReadMessage(const std::string& req_id, std::function<void(AbstractProtocol::s_ptr)> done) {
-    m_read_dones_.insert(std::make_pair(req_id, done));
+void TcpConnection::PushReadMessage(const std::string& msg_id, std::function<void(AbstractProtocol::s_ptr)> done) {
+    m_read_dones_.insert(std::make_pair(msg_id, done));
 }
 
 }

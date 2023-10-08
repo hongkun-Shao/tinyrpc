@@ -11,7 +11,7 @@ class AbstractCoder{
 public:
     //transfer message object to byte stream, write into buffer
     virtual void Encode(std::vector<AbstractProtocol::s_ptr> & message, TcpBuffer::s_ptr out_buffer) = 0;
-
+    
     //transfer the bytes stream in buffer to message onject
     virtual void Decode(std::vector<AbstractProtocol::s_ptr> & out_message, TcpBuffer::s_ptr buffer) = 0;
 
@@ -20,4 +20,4 @@ public:
 
 }
 
-#endif
+#endif  

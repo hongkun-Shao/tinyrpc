@@ -107,13 +107,24 @@ void EventLoop::Loop(){
                     continue;
                 }
 
-                if (trigger_event.events & EPOLLIN) { 
+                int event = (int)(trigger_event.events);
+                DEBUGLOG("unknown event = %d", event);
+
+                if (trigger_event.events & EPOLLIN){ 
                     DEBUGLOG("fd %d trigger EPOLLIN event", fd_event->get_fd())
                     AddTask(fd_event->Handler(FdEvent::IN_EVENT));
                 }
-                if (trigger_event.events & EPOLLOUT) { 
+                if (trigger_event.events & EPOLLOUT){ 
                     DEBUGLOG("fd %d trigger EPOLLOUT event", fd_event->get_fd())
                     AddTask(fd_event->Handler(FdEvent::OUT_EVENT));
+                }
+                if(trigger_event.events & EPOLLERR){
+                    DEBUGLOG("fd %d trigger EPOLLERROR event", fd_event->get_fd());
+                    DeleteEpollEvent(fd_event);
+                    if(fd_event->Handler(FdEvent::ERROR_EVENT) != nullptr){
+                        DEBUGLOG("fd %d add error callback", fd_event->get_fd())
+                        AddTask(fd_event->Handler(FdEvent::OUT_EVENT));
+                    }
                 }
             }
         }
@@ -127,6 +138,7 @@ void EventLoop::WakeUp(){
 
 void EventLoop::Stop(){
     m_stop_flag_ = true;
+    WakeUp();
 }
 
 void EventLoop::AddEpollEvent(FdEvent * event){

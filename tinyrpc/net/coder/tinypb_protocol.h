@@ -1,3 +1,4 @@
+#pragma once
 #ifndef TINYRPC_NET_CODER_TINYPB_PROTOCOL_H
 #define TINYRPC_NET_CODER_TINYRB_PROTOCOL_H
 
@@ -18,7 +19,7 @@ public:
 public:
 
     int32_t m_pkg_len_ {0};
-    int32_t m_req_id_len_ {0};
+    int32_t m_msg_id_len_ {0};
 
     int32_t m_method_name_len_ {0};
     std::string m_method_name_;

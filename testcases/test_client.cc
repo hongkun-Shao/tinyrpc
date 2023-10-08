@@ -53,14 +53,14 @@ void test_tcp_client(){
     client.Connect([addr, &client](){
         DEBUGLOG("connect to [%s] success", addr->ToString().c_str());
         std::shared_ptr<tinyrpc::TinyPBProtocol> message = std::make_shared<tinyrpc::TinyPBProtocol>();
-        message->m_req_id_ = "123456";
+        message->m_msg_id_ = "123456";
         message->m_pb_data_ = "test pb data";
         client.WriteMessage(message, [](tinyrpc::AbstractProtocol::s_ptr msg_ptr){
             DEBUGLOG("send message success");
         });
         client.ReadMessage("123456", [](tinyrpc::AbstractProtocol::s_ptr msg_ptr){
             std::shared_ptr<tinyrpc::TinyPBProtocol> message = std::dynamic_pointer_cast<tinyrpc::TinyPBProtocol>(msg_ptr);
-            DEBUGLOG("req_id[%s], get response %s", message->m_req_id_.c_str(), message->m_pb_data_.c_str());
+            DEBUGLOG("msg_id[%s], get response %s", message->m_msg_id_.c_str(), message->m_pb_data_.c_str());
         });
     });
 }

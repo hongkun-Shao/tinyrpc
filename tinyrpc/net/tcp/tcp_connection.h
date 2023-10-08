@@ -9,6 +9,7 @@
 #include "tinyrpc/net/tcp/net_addr.h"
 #include "tinyrpc/net/tcp/tcp_buffer.h"
 #include "tinyrpc/net/coder/abstract_coder.h"
+#include "tinyrpc/net/rpc/rpc_dispatcher.h"
 
 namespace tinyrpc{
 enum TcpState{
@@ -28,8 +29,7 @@ public:
     typedef std::shared_ptr<TcpConnection> s_ptr;
 
 public:
-    TcpConnection(EventLoop* event_loop, int fd, int buffer_size, NetAddr::s_ptr peer_addr, TcpConnectionType type = TcpConnectionByServer);
-
+    TcpConnection(EventLoop* event_loop, int fd, int buffer_size, NetAddr::s_ptr peer_addr, NetAddr::s_ptr local_addr, TcpConnectionType type = TcpConnectionByServer);
     ~TcpConnection();
 
     void OnRead();
@@ -57,8 +57,16 @@ public:
     void PushSendMessage(AbstractProtocol::s_ptr message, 
                         std::function<void(AbstractProtocol::s_ptr)> done);
 
-    void PushReadMessage(const std::string& req_id, 
+    void PushReadMessage(const std::string& msg_id, 
                         std::function<void(AbstractProtocol::s_ptr)> done);
+
+    NetAddr::s_ptr get_local_addr(){
+        return m_local_addr_;
+    }
+
+    NetAddr::s_ptr get_peer_addr(){
+        return m_peer_addr_;
+    }
 
 private:
     EventLoop* m_event_loop_ {nullptr};   //the io thread has the connection
@@ -82,8 +90,9 @@ private:
     
     std::vector<std::pair<AbstractProtocol::s_ptr, std::function<void(AbstractProtocol::s_ptr)>>> m_write_dones_;
 
-    //key : req_id
+    //key : msg_id
     std::map<std::string, std::function<void(AbstractProtocol::s_ptr)>> m_read_dones_;
+
 };
 
 }
