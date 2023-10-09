@@ -9,7 +9,7 @@
 #include "tinyrpc/net/rpc/rpc_controller.h"
 #include "tinyrpc/net/tcp/net_addr.h"
 #include "tinyrpc/net/tcp/tcp_connection.h"
-
+#include "tinyrpc/tool/run_time.h"
 namespace tinyrpc{
 
 static RpcDispatcher* g_rpc_dispatcher = NULL;
@@ -76,6 +76,9 @@ void RpcDispatcher::dispatch(AbstractProtocol::s_ptr request, AbstractProtocol::
     rpcController.SetLocalAddr(connection->get_local_addr());
     rpcController.SetPeerAddr(connection->get_peer_addr());
     rpcController.SetMsgId(req_protocol->m_msg_id_);
+    
+    RunTime::GetRunTime()->m_msgid = req_protocol->m_msg_id_;
+    RunTime::GetRunTime()->m_method_name = method_name;
 
     service->CallMethod(method, &rpcController, req_msg, rsp_msg, NULL);
 

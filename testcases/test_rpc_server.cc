@@ -30,9 +30,9 @@ class OrderImpl : public Order {
                       const ::makeOrderRequest* request,
                       ::makeOrderResponse* response,
                       ::google::protobuf::Closure* done) {
-    DEBUGLOG("start sleep 5s");
+    APPDEBUGLOG("start sleep 5s");
     sleep(5);
-    DEBUGLOG("end sleep 5s");
+    APPDEBUGLOG("end sleep 5s");
     
     if (request->price() < 10) {
       response->set_ret_code(-1);
@@ -40,33 +40,30 @@ class OrderImpl : public Order {
       return;
     }
     response->set_order_id("20230514");
+    APPDEBUGLOG("call makeOrder success");
   }
 
 };
 
-void test_tcp_server() {
-
-  tinyrpc::IPNetAddr::s_ptr addr = std::make_shared<tinyrpc::IPNetAddr>("127.0.0.1", 12346);
-
-  DEBUGLOG("create addr %s", addr->ToString().c_str());
-
-  tinyrpc::TcpServer tcp_server(addr);
-
-  tcp_server.Start();
-
-}
-
-
-int main() {
-
-  tinyrpc::Config::SetGlobalConfig("../conf/tinyrpc.xml");
+int main(int argc, char * argv[]) {
+  if (argc != 2) {
+    printf("Start test_rpc_server error, argc not 2 \n");
+    printf("Start like this: \n");
+    printf("./test_rpc_server ../conf/tinyrpc.xml \n");
+    return 0;
+  }
+  tinyrpc::Config::SetGlobalConfig(argv[1]);
 
   tinyrpc::Logger::InitGlobalLogger();
 
   std::shared_ptr<OrderImpl> service = std::make_shared<OrderImpl>();
   tinyrpc::RpcDispatcher::GetRpcDispatcher()->registerService(service);
 
-  test_tcp_server();
+  tinyrpc::IPNetAddr::s_ptr addr = std::make_shared<tinyrpc::IPNetAddr>("127.0.0.1", tinyrpc::Config::GetGlobalConfig()->m_port);
+
+  tinyrpc::TcpServer tcp_server(addr);
+
+  tcp_server.Start();
 
   return 0;
 }

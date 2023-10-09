@@ -22,6 +22,10 @@ public:
     void unlock(){
         pthread_mutex_unlock(&m_mutex_);
     }
+    
+    pthread_mutex_t* getMutex() {
+        return &m_mutex_;
+    }
 private:
     pthread_mutex_t m_mutex_;
 };
@@ -50,6 +54,7 @@ public:
             m_mutex_.unlock();
         }
     }
+
 private:
     T & m_mutex_;
     bool m_is_lock_;

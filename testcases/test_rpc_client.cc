@@ -68,7 +68,7 @@ void test_tcp_client() {
 }
 
 void test_rpc_channel() {
-  NEWRPCCHANNEL("127.0.0.1:12346", channel);
+  NEWRPCCHANNEL("127.0.0.1:12345", channel);
 
   NEWMESSAGE(makeOrderRequest, request);
   NEWMESSAGE(makeOrderResponse, response);
@@ -94,7 +94,7 @@ void test_rpc_channel() {
     }
 
     INFOLOG("now exit eventloop");
-    channel->getTcpClient()->stop();
+    //channel->getTcpClient()->stop();
     channel.reset();
   });
 
@@ -103,14 +103,14 @@ void test_rpc_channel() {
   // Order_Stub stub(channel.get());
 
   // stub.makeOrder(controller.get(), request.get(), response.get(), closure.get());
-  CALLRPRC("127.0.0.1:12346", makeOrder, controller, request, response, closure); 
+  CALLRPRC("127.0.0.1:12345", makeOrder, controller, request, response, closure); 
 }
 
 int main() {
 
-  tinyrpc::Config::SetGlobalConfig("../conf/tinyrpc.xml");
+  tinyrpc::Config::SetGlobalConfig(NULL);
 
-  tinyrpc::Logger::InitGlobalLogger();
+  tinyrpc::Logger::InitGlobalLogger(0);
 
   //test_tcp_client();
   test_rpc_channel();
