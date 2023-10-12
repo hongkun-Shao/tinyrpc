@@ -1,7 +1,7 @@
 ##################################
 # makefile
-# ikerli
-# 2022-05-23
+# showcode
+# 2023-10-11
 ##################################
 
 PATH_BIN = bin
@@ -17,10 +17,10 @@ PATH_RPC = $(PATH_TINYRPC)/net/rpc
 
 PATH_TESTCASES = testcases
 
-# will install lib to /usr/lib/libsocket.a
+# will install lib to /usr/lib/libtinyrpc.a
 PATH_INSTALL_LIB_ROOT = /usr/lib
 
-# will install all header file to /usr/include/socket
+# will install all header file to /usr/include/tinyrpc
 PATH_INSTALL_INC_ROOT = /usr/include
 
 PATH_INSTALL_INC_TOOL = $(PATH_INSTALL_INC_ROOT)/$(PATH_TOOL)
@@ -101,7 +101,7 @@ clean :
 
 # install
 install:
-	mkdir -p $(PATH_INSTALL_INC_TOOL) $(PATH_INSTALL_INC_NET) \
+	mkdir -p $(PATH_INSTALL_INC_TOOL) $(PATH_INSTALL_INC_NET) $(PATH_INSTALL_INC_TCP) $(PATH_INSTALL_INC_CODER) $(PATH_INSTALL_INC_RPC)\
 		&& cp $(PATH_TOOL)/*.h $(PATH_INSTALL_INC_TOOL) \
 		&& cp $(PATH_NET)/*.h $(PATH_INSTALL_INC_NET) \
 		&& cp $(PATH_TCP)/*.h $(PATH_INSTALL_INC_TCP) \

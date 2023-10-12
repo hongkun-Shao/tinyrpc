@@ -1,7 +1,7 @@
 #include "tinyrpc/tool/log.h"
 #include "tinyrpc/net/eventloop.h"
 #include "tinyrpc/net/tcp/tcp_server.h"
-
+#include "tinyrpc/tool/config.h"
 namespace tinyrpc{
 
 TcpServer::TcpServer(NetAddr::s_ptr local_addr) : m_local_addr_(local_addr){
@@ -25,7 +25,7 @@ void TcpServer::Start(){
 void TcpServer::Init(){
     m_acceptor_ = std::make_shared<TcpAcceptor>(m_local_addr_);
     m_main_event_loop_ = EventLoop::GetCurrentEventLoop();
-    m_io_thread_pool_ = new IOThreadPool(2);
+    m_io_thread_pool_ = new IOThreadPool(Config::GetGlobalConfig()->m_io_threads);
 
     m_listen_fd_event_ = new FdEvent(m_acceptor_->get_listenfd());
     m_listen_fd_event_->Listen(FdEvent::IN_EVENT, std::bind(&TcpServer::OnAccept, this));
