@@ -1,5 +1,5 @@
 # tinyrpc
-## 1.Tiny RPC overview
+## 1.Tiny RPC Overview
 Tinyrpc is a multithreaded asynchronous RPC framework developed based on C++11, designed to be efficient and concise while maintaining extremely high performance.
 
 Tinyrpc is also based on the master-slave actor architecture, with epoll used for IO multiplexing at the bottom. The application layer is based on protobuf custom rpc communication protocol, and will also support simple HTTP protocol.
@@ -9,7 +9,7 @@ Tinyrpc is also based on the master-slave actor architecture, with epoll used fo
 2. g++(support C++11)
 3. protobuf 3.19.4a
 4. tinyxml
-### 2.1 build environment
+### 2.1 Build Environment
 1. protobuf
     protobuf Recommended use of 3.19.4 and above:
 
@@ -57,7 +57,17 @@ The project used a configuration module and used XML as the configuration file. 
     mkdir /usr/include/tinyxml
     cp *.h /usr/include/tinyxml
 ```
-## 3. Development Sequence
+
+## 3.How to use tinyrpc
+
+1. Clone the project locally, assuming the absolute path of the project is /root/tinyrpc
+2. `cd /root/tinyrpc`
+3. View the makefile file and change `LIBS += /usr/lib64/libprotobuf.a  /usr/lib/libtinyxml.a` to the address where you downloaded it yourself.
+5. `make` to generate lib, bin, obj file
+6. `make install` install tinyrpc.a tinyrpc/*.h to local adress。
+7. create proto file，use generator to generate your rpc service。Reference Article:[[模块讲解七：Generator(脚手架)模块](http://showmycodes.com/2023/11/13/模块讲解七：generator脚手架模块/)]()
+
+## 4. Development Sequence
 ```
 1.Environment install and Project development
 1.1 Build Environment and Install library
@@ -95,14 +105,14 @@ The project used a configuration module and used XML as the configuration file. 
 6.2 build & test project
 
 ```
-## 4.Code Explanation Address
+## 5.Code Explanation Address
 personal blog：http://showmycodes.com/category/pesonal-demo/tinyrpc/
 
-## 5. TODO
+## 6. TODO
 1. Register Module 
 2. Coroutine
 
-## 6.Thank to 
+## 7.Thank to 
 1. https://github.com/attackoncs/rpc (tiny basic synchronous RPC framework)
 2. https://github.com/Gooddbird/tinyrpc (tiny multi threaded asynchronous RPC framework)
 3. https://github.com/grpc/grpc (a modern, open source, high-performance remote procedure call (RPC) framework)
