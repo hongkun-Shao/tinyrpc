@@ -65,7 +65,7 @@ The project used a configuration module and used XML as the configuration file. 
 3. View the makefile file and change `LIBS += /usr/lib64/libprotobuf.a  /usr/lib/libtinyxml.a` to the address where you downloaded it yourself.
 5. `make` to generate lib, bin, obj file
 6. `make install` install tinyrpc.a tinyrpc/*.h to local adress。
-7. create proto file，use generator to generate your rpc service。Reference Article:[模块讲解七：Generator(脚手架)模块](http://showmycodes.com/2023/11/13/模块讲解七：generator脚手架模块/)
+7. create proto file，use generator to generate your rpc service。Reference Article:[Module Explanation Seven：Generator Module](http://showmycodes.com/2023/11/13/模块讲解七：generator脚手架模块/)
 
 ## 4. Development Sequence
 ```

@@ -72,7 +72,7 @@ tinyrpc 同样是基于主从 Reactor 架构，底层采用 epoll 实现 IO 多�
    改成自己下载的地址。
 5. `make` 生成lib, bin, obj文件
 6. `make install` 将tinyrpc.a tinyrpc/*.h安装到本地环境中。
-7. 创建proto文件， 使用generator生成自己的rpc服务。参考文章: [Module Explanation Seven：Generator Module](http://showmycodes.com/2023/11/13/模块讲解七：generator脚手架模块/)
+7. 创建proto文件， 使用generator生成自己的rpc服务。参考文章: [模块讲解七：Generator(脚手架)模块](http://showmycodes.com/2023/11/13/模块讲解七：generator脚手架模块/)
 
 
 ## 4. 开发顺序
