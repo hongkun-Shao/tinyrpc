@@ -1,7 +1,11 @@
+#include <google/protobuf/service.h>
+#include <google/protobuf/descriptor.h>
 #include "tinyrpc/tool/log.h"
 #include "tinyrpc/net/eventloop.h"
 #include "tinyrpc/net/tcp/tcp_server.h"
 #include "tinyrpc/tool/config.h"
+#include "tinyrpc/net/rpc/rpc_dispatcher.h"
+
 namespace tinyrpc{
 
 TcpServer::TcpServer(NetAddr::s_ptr local_addr) : m_local_addr_(local_addr){
@@ -15,6 +19,21 @@ TcpServer::~TcpServer(){
         delete m_main_event_loop_;
         m_main_event_loop_ = nullptr;
     }
+    if(m_zookeeper_client_){
+        delete m_zookeeper_client_;
+        m_zookeeper_client_ = nullptr;
+    }
+}
+
+void TcpServer::RegisterServiceToCenter(service_s_ptr service){
+    std::string service_name = service->GetDescriptor()->full_name();
+    m_zookeeper_client_->Start();
+    std::string service_path = "/" + service_name;
+    char service_path_data[128] = {0};
+    sprintf(service_path_data, "%s", m_local_addr_->ToString().c_str());
+    m_zookeeper_client_->Create(service_path.c_str(), service_path_data, strlen(service_path_data), 0);
+    INFOLOG("netaddr: %s", m_local_addr_->ToString().c_str());
+    INFOLOG("service: %s has registered to Center, path: %s, data: %s", service_name.c_str(), service_path.c_str(), service_path_data);
 }
 
 void TcpServer::Start(){
@@ -30,6 +49,8 @@ void TcpServer::Init(){
     m_listen_fd_event_ = new FdEvent(m_acceptor_->get_listenfd());
     m_listen_fd_event_->Listen(FdEvent::IN_EVENT, std::bind(&TcpServer::OnAccept, this));
     m_main_event_loop_->AddEpollEvent(m_listen_fd_event_);
+
+    m_zookeeper_client_ = new ZkClient();
 }
 
 void TcpServer::OnAccept() {

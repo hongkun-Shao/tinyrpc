@@ -24,7 +24,7 @@
 #include "tinyrpc/net/rpc/rpc_closure.h"
 #include "tinyrpc/net/rpc/rpc_controller.h"
 #include "tinyrpc/net/rpc/rpc_channel.h"
-
+#include "tinyrpc/tool/zookeeper_util.h"
 #include "order.pb.h"
 
 void test_tcp_client() {
@@ -68,7 +68,11 @@ void test_tcp_client() {
 }
 
 void test_rpc_channel() {
-  NEWRPCCHANNEL("127.0.0.1:12345", channel);
+  tinyrpc::ZkClient zookeeper_client;
+  zookeeper_client.Start();
+  std::string service_netaddr = zookeeper_client.GetData("/Order");
+  INFOLOG("Get the NetAddr where Service is located, IPV4Addr: %s", service_netaddr.c_str());
+  NEWRPCCHANNEL(service_netaddr, channel);
 
   NEWMESSAGE(makeOrderRequest, request);
   NEWMESSAGE(makeOrderResponse, response);
@@ -103,7 +107,7 @@ void test_rpc_channel() {
   // Order_Stub stub(channel.get());
 
   // stub.makeOrder(controller.get(), request.get(), response.get(), closure.get());
-  CALLRPRC("127.0.0.1:12345", Order_Stub, makeOrder, controller, request, response, closure); 
+  CALLRPRC(service_netaddr, Order_Stub, makeOrder, controller, request, response, closure); 
 }
 
 int main() {

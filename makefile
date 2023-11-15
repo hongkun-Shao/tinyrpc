@@ -32,14 +32,14 @@ PATH_INSTALL_INC_RPC = $(PATH_INSTALL_INC_ROOT)/$(PATH_RPC)
 
 # PATH_PROTOBUF = /usr/include/google
 # PATH_TINYXML = /usr/include/tinyxml
-
+# PATH_ZOOKEEPER = /usr/include/zookeeper
 CXX := g++
 
 CXXFLAGS += -g -O0 -std=c++11 -Wall -Wno-deprecated -Wno-unused-but-set-variable
 
 CXXFLAGS += -I./ -I$(PATH_TINYRPC)	-I$(PATH_TOOL) -I$(PATH_NET) -I$(PATH_TCP) -I$(PATH_CODER) -I$(PATH_RPC)
 
-LIBS += /usr/lib64/libprotobuf.a	/usr/lib/libtinyxml.a
+LIBS += /usr/lib/libprotobuf.a	/usr/lib/libtinyxml.a /usr/lib/libzookeeper_mt.a
 
 
 TOOL_OBJ := $(patsubst $(PATH_TOOL)/%.cc, $(PATH_OBJ)/%.o, $(wildcard $(PATH_TOOL)/*.cc))
@@ -54,7 +54,7 @@ TEST_CASE_OUT := $(PATH_BIN)/test_log $(PATH_BIN)/test_eventloop $(PATH_BIN)/tes
 LIB_OUT := $(PATH_LIB)/libtinyrpc.a
 
 $(PATH_BIN)/test_log: $(LIB_OUT)
-	$(CXX) $(CXXFLAGS) $(PATH_TESTCASES)/test_log.cc -o $@ $(LIB_OUT) $(LIBS) -ldl -pthread
+	$(CXX) $(CXXFLAGS) $(PATH_TESTCASES)/test_log.cc -o $@ $(LIB_OUT) $(LIBS) -ldl -pthread 
 
 $(PATH_BIN)/test_eventloop: $(LIB_OUT)
 	$(CXX) $(CXXFLAGS) $(PATH_TESTCASES)/test_eventloop.cc -o $@ $(LIB_OUT) $(LIBS) -ldl -pthread
@@ -69,7 +69,7 @@ $(PATH_BIN)/test_rpc_client: $(LIB_OUT)
 	$(CXX) $(CXXFLAGS) $(PATH_TESTCASES)/test_rpc_client.cc $(PATH_TESTCASES)/order.pb.cc -o $@ $(LIB_OUT) $(LIBS) -ldl -pthread
 
 $(PATH_BIN)/test_rpc_server: $(LIB_OUT)
-	$(CXX) $(CXXFLAGS) $(PATH_TESTCASES)/test_rpc_server.cc $(PATH_TESTCASES)/order.pb.cc -o $@ $(LIB_OUT) $(LIBS) -ldl -pthread
+	$(CXX) $(CXXFLAGS) $(PATH_TESTCASES)/test_rpc_server.cc $(PATH_TESTCASES)/order.pb.cc -o $@ $(LIB_OUT) $(LIBS) -ldl -pthread 
 
 $(LIB_OUT): $(TOOL_OBJ) $(NET_OBJ) $(TCP_OBJ) $(CODER_OBJ) $(RPC_OBJ)
 	cd $(PATH_OBJ) && ar rcv libtinyrpc.a *.o && cp libtinyrpc.a ../lib/

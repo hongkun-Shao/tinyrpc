@@ -59,9 +59,11 @@ int main(int argc, char * argv[]) {
   std::shared_ptr<OrderImpl> service = std::make_shared<OrderImpl>();
   tinyrpc::RpcDispatcher::GetRpcDispatcher()->registerService(service);
 
-  tinyrpc::IPNetAddr::s_ptr addr = std::make_shared<tinyrpc::IPNetAddr>("127.0.0.1", tinyrpc::Config::GetGlobalConfig()->m_port);
+  tinyrpc::IPNetAddr::s_ptr addr = std::make_shared<tinyrpc::IPNetAddr>(tinyrpc::Config::GetGlobalConfig()->m_ip, tinyrpc::Config::GetGlobalConfig()->m_port);
 
   tinyrpc::TcpServer tcp_server(addr);
+
+  tcp_server.RegisterServiceToCenter(service);
 
   tcp_server.Start();
 

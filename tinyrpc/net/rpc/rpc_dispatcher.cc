@@ -41,7 +41,7 @@ void RpcDispatcher::dispatch(AbstractProtocol::s_ptr request, AbstractProtocol::
 
     auto it = m_service_map.find(service_name);
     if (it == m_service_map.end()) {
-        ERRORLOG("%s | sericve neame[%s] not found", req_protocol->m_msg_id_.c_str(), service_name.c_str());
+        ERRORLOG("%s | sericve name[%s] not found", req_protocol->m_msg_id_.c_str(), service_name.c_str());
         setTinyPBError(rsp_protocol, ERROR_SERVICE_NOT_FOUND, "service not found");
         return;
     }
@@ -137,4 +137,5 @@ void RpcDispatcher::setTinyPBError(std::shared_ptr<TinyPBProtocol> msg, int32_t 
     msg->m_err_info_ = err_info;
     msg->m_err_info_len_ = err_info.length();
 }
+
 }

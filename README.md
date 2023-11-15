@@ -109,7 +109,7 @@ The project used a configuration module and used XML as the configuration file. 
 personal blog：http://showmycodes.com/category/pesonal-demo/tinyrpc/
 
 ## 6. TODO
-1. Register Module 
+1. ~~Register Module~~ （2023/11/15 update）
 2. Coroutine
 
 ## 7.Thank to 
@@ -117,3 +117,6 @@ personal blog：http://showmycodes.com/category/pesonal-demo/tinyrpc/
 2. https://github.com/Gooddbird/tinyrpc (tiny multi threaded asynchronous RPC framework)
 3. https://github.com/grpc/grpc (a modern, open source, high-performance remote procedure call (RPC) framework)
 4. https://www.bilibili.com/video/BV1cg4y1j7Wr/?spm_id_from=333.788&vd_source=ad408864adbf0c5272deb4934fdf08dc (Video learning website)
+
+## 8.Update Timeline
+1. Register Module by zookeeper (2023/11/15 update)

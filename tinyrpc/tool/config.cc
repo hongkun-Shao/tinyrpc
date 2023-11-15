@@ -77,14 +77,15 @@ Config::Config(const char* xmlfile) {
   printf("LOG -- CONFIG LEVEL[%s], FILE_NAME[%s],FILE_PATH[%s] MAX_FILE_SIZE[%d B], SYNC_INTEVAL[%d ms]\n", 
     m_log_level.c_str(), m_log_file_name.c_str(), m_log_file_path.c_str(), m_log_max_file_size, m_log_sync_inteval);
 
+  READ_STR_FROM_XML_NODE(ip, server_node);
   READ_STR_FROM_XML_NODE(port, server_node);
   READ_STR_FROM_XML_NODE(io_threads, server_node);
 
+  m_ip = ip_str;
   m_port = std::atoi(port_str.c_str());
   m_io_threads = std::atoi(io_threads_str.c_str());
 
-  printf("Server -- PORT[%d], IO Threads[%d]\n", m_port, m_io_threads);
-
+  printf("Server -- IP[%s]:PORT[%d], IO Threads[%d]\n", m_ip.c_str(), m_port, m_io_threads);
 }
 
 

@@ -2,19 +2,27 @@
 #define TINYRPC_NET_TCP_TCP_SERVER_H
 
 #include <set>
+#include <google/protobuf/service.h>
 #include "tinyrpc/net/tcp/tcp_acceptor.h"
 #include "tinyrpc/net/tcp/tcp_connection.h"
 #include "tinyrpc/net/tcp/net_addr.h"
 #include "tinyrpc/net/eventloop.h"
 #include "tinyrpc/net/io_thread_pool.h"
+#include "tinyrpc/tool/zookeeper_util.h"
+
 
 namespace tinyrpc{
 
 class TcpServer{
 public:
+    typedef std::shared_ptr<google::protobuf::Service> service_s_ptr;
+
     TcpServer(NetAddr::s_ptr local_addr);
 
     ~TcpServer();
+
+    //向 注册中心（zookeeper） 注册能够提供的服务
+    void RegisterServiceToCenter(service_s_ptr service);
 
     void Start();
 
@@ -38,6 +46,8 @@ private:
     int m_client_counts_ {0};
 
     std::set<TcpConnection::s_ptr> m_client_;
+
+    ZkClient * m_zookeeper_client_ {nullptr};
 };
 
 }
