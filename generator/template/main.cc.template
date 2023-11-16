@@ -33,11 +33,16 @@ int main(int argc, char* argv[]) {
 
   tinyrpc::Logger::InitGlobalLogger();
 
-  tinyrpc::RpcDispatcher::GetRpcDispatcher()->registerService(std::make_shared<${CLASS_NAME}>());
+  
+  std::shared_ptr<${CLASS_NAME}> service = std::make_shared<${CLASS_NAME}>();
+
+  tinyrpc::RpcDispatcher::GetRpcDispatcher()->registerService(service);
 
   tinyrpc::IPNetAddr::s_ptr addr = std::make_shared<tinyrpc::IPNetAddr>("127.0.0.1", tinyrpc::Config::GetGlobalConfig()->m_port);
 
   tinyrpc::TcpServer tcp_server(addr);
+  
+  tcp_server.RegisterServiceToCenter(service);
 
   tcp_server.Start();
 

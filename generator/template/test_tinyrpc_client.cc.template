@@ -3,6 +3,7 @@
 #include "tinyrpc/net/rpc/rpc_controller.h"
 #include "tinyrpc/net/rpc/rpc_closure.h"
 #include "tinyrpc/tool/log.h"
+#include "tinyrpc/tool/zookeeper_util.h"
 ${INCLUDE_PB_HEADER}
 
 
@@ -33,15 +34,18 @@ void test_client(const std::string& addr){
 
 } 
 
-int main(int argc, char* argv[]) {
+int main() {
 
   tinyrpc::Config::SetGlobalConfig(NULL);
 
   tinyrpc::Logger::InitGlobalLogger(0);
 
-  std::string addr = std::string(argv[1]) + ":" + std::string(argv[2]);  
-
-  test_client(addr);
+  tinyrpc::ZkClient zookeeper_client;
+  zookeeper_client.Start();
+  std::string service_netaddr = zookeeper_client.GetData("/${SERVICE_NAME}");
+  INFOLOG("Get the NetAddr where Service is located, IPV4Addr: %s", service_netaddr.c_str());
+     
+  test_client(service_netaddr);
 
   return 0;
 }

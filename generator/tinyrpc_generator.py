@@ -462,6 +462,7 @@ def generate_framework_code():
                 STUBCLASS = stub_name,
                 METHOD_NAME = each['method_name'],
                 FILE_NAME = 'test_' + each['interface_name'] + '_client.cc',
+                SERVICE_NAME = service_name,
             )
             out_interface_cc_file = open(file, 'w')
             out_interface_cc_file.write(cc_file_content)

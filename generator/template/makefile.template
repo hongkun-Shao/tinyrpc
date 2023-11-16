@@ -37,6 +37,10 @@ PROTOBUF_LIB = /usr/lib64/libprotobuf.a
 # if you have installed libtinyxml.a in another path, please modify it
 TINYXML_LIB = /usr/lib/libtinyxml.a
 
+# zookeeper
+# if you have installed libzookeeper_mt.a in another path, please modify it
+ZOOKEEPER_LIB = /usr/lib/libzookeeper_mt.a
+
 # out bin file
 TARGET = $(PATH_BIN)/${PROJECT_NAME}
 
@@ -48,7 +52,7 @@ CXX_FLAGS += -I../ -I ./$(PATH_PB) -I ./$(PATH_SERVICE) -I ./$(PATH_INTERFACE) -
 
 LIBS += $(TINYRPC_LIB)
 
-LIBS += $(PROTOBUF_LIB) $(TINYXML_LIB)
+LIBS += $(PROTOBUF_LIB) $(TINYXML_LIB) $(ZOOKEEPER_LIB)
 
 PB_OBJS := $(patsubst $(PATH_PB)/%.cc, $(PATH_OBJ)/%.o, $(wildcard $(PATH_PB)/*.cc))
 SERVICE_OBJS := $(patsubst $(PATH_SERVICE)/%.cc, $(PATH_OBJ)/%.o, $(wildcard $(PATH_SERVICE)/*.cc))
