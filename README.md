@@ -1,4 +1,5 @@
 # tinyrpc
+中文版请见：README_ZH.md
 ## 1.Tiny RPC Overview
 Tinyrpc is a multithreaded asynchronous RPC framework developed based on C++11, designed to be efficient and concise while maintaining extremely high performance.
 
@@ -65,7 +66,7 @@ The project used a configuration module and used XML as the configuration file. 
 3. View the makefile file and change `LIBS += /usr/lib64/libprotobuf.a  /usr/lib/libtinyxml.a` to the address where you downloaded it yourself.
 5. `make` to generate lib, bin, obj file
 6. `make install` install tinyrpc.a tinyrpc/*.h to local adress。
-7. create proto file，use generator to generate your rpc service。Reference Article:[Module Explanation Seven：Generator Module](http://showmycodes.com/2023/11/13/模块讲解七：generator脚手架模块/)
+7. create proto file，use generator to generate your rpc service。
 
 ## 4. Development Sequence
 ```
@@ -106,7 +107,7 @@ The project used a configuration module and used XML as the configuration file. 
 
 ```
 ## 5.Code Explanation Address
-personal blog：http://showmycodes.com/category/pesonal-demo/tinyrpc/
+personal blog：http://showmycodes.com/categories/tinyrpc/
 
 ## 6. TODO
 1. ~~Register Module~~ （2023/11/15 update）
@@ -116,7 +117,6 @@ personal blog：http://showmycodes.com/category/pesonal-demo/tinyrpc/
 1. https://github.com/attackoncs/rpc (tiny basic synchronous RPC framework)
 2. https://github.com/Gooddbird/tinyrpc (tiny multi threaded asynchronous RPC framework)
 3. https://github.com/grpc/grpc (a modern, open source, high-performance remote procedure call (RPC) framework)
-4. https://www.bilibili.com/video/BV1cg4y1j7Wr/?spm_id_from=333.788&vd_source=ad408864adbf0c5272deb4934fdf08dc (Video learning website)
 
 ## 8.Update Timeline
 1. Register Module by zookeeper (2023/11/15 update)

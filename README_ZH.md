@@ -77,8 +77,7 @@ tinyrpc 同样是基于主从 Reactor 架构，底层采用 epoll 实现 IO 多�
 
 5. `make install` 将tinyrpc.a tinyrpc/*.h安装到本地环境中。
 
-6. 创建proto文件， 使用generator生成自己的rpc服务。参考文章[模块讲解七：Generator(脚手架)模块 – ShowCode (showmycodes.com)](http://showmycodes.com/2023/11/13/模块讲解七：generator脚手架模块/)
-
+6. 创建proto文件， 使用generator生成自己的rpc服务。
    
 ## 4. 开发顺序
 
@@ -121,7 +120,7 @@ tinyrpc 同样是基于主从 Reactor 架构，底层采用 epoll 实现 IO 多�
 
 ## 5.代码讲解地址
 
-个人博客：http://showmycodes.com/category/pesonal-demo/tinyrpc/
+个人博客：http://showmycodes.com/categories/tinyrpc/
 
 ## 6.待优化点
 
@@ -133,7 +132,6 @@ tinyrpc 同样是基于主从 Reactor 架构，底层采用 epoll 实现 IO 多�
 1. https://github.com/attackoncs/rpc (轻型同步RPC框架)
 2. https://github.com/Gooddbird/tinyrpc (轻型多线程异步RPC框架)
 3. https://github.com/grpc/grpc (一个现代的、开源的、高性能的远程过程调用（RPC）框架)
-4. https://www.bilibili.com/video/BV1cg4y1j7Wr/?spm_id_from=333.788&vd_source=ad408864adbf0c5272deb4934fdf08dc (视频学习地址)
 
 ## 8.更新时间线
 1. 通过zookeeper实现服务注册中心 （2023/11/15 完成）
