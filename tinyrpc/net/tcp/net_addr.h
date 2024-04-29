@@ -1,53 +1,54 @@
 #ifndef TINYRPC_NET_TCP_NET_ADDR_H
 #define TINYRPC_NET_TCP_NET_ADDR_H
 
-#include <memory>
-#include <string>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
-namespace tinyrpc{
+#include <memory>
+#include <string>
 
-class NetAddr{
-public:
-    typedef std::shared_ptr<NetAddr> s_ptr;
+namespace tinyrpc {
 
-    virtual sockaddr * GetSockAddr() = 0;
+class NetAddr {
+ public:
+  typedef std::shared_ptr<NetAddr> s_ptr;
 
-    virtual socklen_t GetSockLen() = 0;
+  virtual sockaddr* GetSockAddr() = 0;
 
-    virtual int GetFamily() = 0;
+  virtual socklen_t GetSockLen() = 0;
 
-    virtual std::string ToString() = 0;
+  virtual int GetFamily() = 0;
 
-    virtual bool CheckVaild() = 0;
+  virtual std::string ToString() = 0;
+
+  virtual bool CheckVaild() = 0;
 };
 
-class IPNetAddr : public NetAddr{
-public:
-    IPNetAddr(const std::string& ip, uint16_t port);
-  
-    IPNetAddr(const std::string& addr);
+class IPNetAddr : public NetAddr {
+ public:
+  IPNetAddr(const std::string& ip, uint16_t port);
 
-    IPNetAddr(sockaddr_in addr);
+  IPNetAddr(const std::string& addr);
 
-    sockaddr* GetSockAddr();
+  IPNetAddr(sockaddr_in addr);
 
-    socklen_t GetSockLen();
+  sockaddr* GetSockAddr();
 
-    int GetFamily();
+  socklen_t GetSockLen();
 
-    std::string ToString();
+  int GetFamily();
 
-    bool CheckVaild();
-    
-private:
-    std::string m_ip_;
-    uint16_t m_port_ {0};
+  std::string ToString();
 
-    sockaddr_in m_addr_;
+  bool CheckVaild();
+
+ private:
+  std::string m_ip_;
+  uint16_t m_port_{0};
+
+  sockaddr_in m_addr_;
 };
 
-}
+}  // namespace tinyrpc
 
 #endif

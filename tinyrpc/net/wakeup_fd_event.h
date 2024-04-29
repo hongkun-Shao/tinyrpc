@@ -3,17 +3,17 @@
 
 #include "tinyrpc/net/fd_event.h"
 
-namespace tinyrpc{
+namespace tinyrpc {
 
-class WakeUpFdEvent : public FdEvent{
-public:
-    WakeUpFdEvent(int fd);
+class WakeUpFdEvent : public FdEvent {
+ public:
+  WakeUpFdEvent(int fd);
 
-    ~WakeUpFdEvent();
+  ~WakeUpFdEvent();
 
-    void wakeup();
+  void wakeup();
 };
 
-}
+}  // namespace tinyrpc
 
 #endif

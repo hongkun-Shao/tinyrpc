@@ -1,75 +1,76 @@
 #ifndef TINYRPC_NET_EVENTLOOP_H
 #define TINYRPC_NET_EVENTLOOP_H
 
-#include <set>
-#include <queue>
 #include <pthread.h>
+
 #include <functional>
+#include <queue>
+#include <set>
 
-#include "tinyrpc/net/timer.h"
-#include "tinyrpc/tool/mutex.h"
 #include "tinyrpc/net/fd_event.h"
+#include "tinyrpc/net/timer.h"
 #include "tinyrpc/net/wakeup_fd_event.h"
+#include "tinyrpc/tool/mutex.h"
 
-namespace tinyrpc{
+namespace tinyrpc {
 
-class EventLoop{
-public:
-    EventLoop();
-    ~EventLoop();
+class EventLoop {
+ public:
+  EventLoop();
+  ~EventLoop();
 
-public:
-    void Loop();
+ public:
+  void Loop();
 
-    void WakeUp();
+  void WakeUp();
 
-    void Stop();
+  void Stop();
 
-    void AddEpollEvent(FdEvent * event);
+  void AddEpollEvent(FdEvent* event);
 
-    void DeleteEpollEvent(FdEvent * event);
+  void DeleteEpollEvent(FdEvent* event);
 
-    bool IsInLoopThread();
+  bool IsInLoopThread();
 
-    void AddTask(std::function<void()> cb, bool is_wake_up = false);
+  void AddTask(std::function<void()> cb, bool is_wake_up = false);
 
-    void AddTimerEvent(TimerEvent::s_ptr event);
+  void AddTimerEvent(TimerEvent::s_ptr event);
 
-    void DeleteTimerEvent(TimerEvent::s_ptr event);
-    
-    bool IsLooping();
+  void DeleteTimerEvent(TimerEvent::s_ptr event);
 
-public:
-    static EventLoop* GetCurrentEventLoop();
+  bool IsLooping();
 
-private:
-    void DealWakeup();
+ public:
+  static EventLoop* GetCurrentEventLoop();
 
-    void InitWakeUpFdEevent();
+ private:
+  void DealWakeup();
 
-    void InitTimer();
+  void InitWakeUpFdEevent();
 
-private:
-    pid_t m_thread_id_;                                     //thread where eventloop in 
+  void InitTimer();
 
-    int m_epoll_fd_ {0};
-    int m_wakeup_fd_ {0};
+ private:
+  pid_t m_thread_id_;  // thread where eventloop in
 
-    WakeUpFdEvent * m_wakeup_fd_event_ {nullptr};
-    
-    Timer * m_timer_ {nullptr};
+  int m_epoll_fd_{0};
+  int m_wakeup_fd_{0};
 
-    bool m_stop_flag_ {false};                              //stop flag
+  WakeUpFdEvent* m_wakeup_fd_event_{nullptr};
 
-    std::set<int> m_listen_fds;
+  Timer* m_timer_{nullptr};
 
-    std::queue<std::function<void()>> m_pending_tasks_;     //task queue
+  bool m_stop_flag_{false};  // stop flag
 
-    Mutex m_mutex_;
+  std::set<int> m_listen_fds;
 
-    bool m_is_looping_ {false};
+  std::queue<std::function<void()>> m_pending_tasks_;  // task queue
+
+  Mutex m_mutex_;
+
+  bool m_is_looping_{false};
 };
 
-}
+}  // namespace tinyrpc
 
 #endif

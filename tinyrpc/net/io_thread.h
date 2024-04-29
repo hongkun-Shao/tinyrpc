@@ -3,34 +3,34 @@
 
 #include <pthread.h>
 #include <semaphore.h>
+
 #include "tinyrpc/net/eventloop.h"
 
-namespace tinyrpc{
+namespace tinyrpc {
 
-class IOThread{
-public:
-    IOThread();
-    ~IOThread();
+class IOThread {
+ public:
+  IOThread();
+  ~IOThread();
 
-    EventLoop * get_eventloop();
+  EventLoop* get_eventloop();
 
-    void start();
+  void start();
 
-    void join();
+  void join();
 
-public:
-    static void * Main(void * arg);
-private:
-    pid_t m_thread_id_ {-1};
-    pthread_t m_thread_ {0};   //thread handle
+ public:
+  static void* Main(void* arg);
 
-    EventLoop * m_event_loop_ {nullptr};  // current thread's eventloop
+ private:
+  pid_t m_thread_id_{-1};
+  pthread_t m_thread_{0};  // thread handle
 
-    sem_t m_init_sem_;
-    sem_t m_start_sem_;
+  EventLoop* m_event_loop_{nullptr};  // current thread's eventloop
 
-
+  sem_t m_init_sem_;
+  sem_t m_start_sem_;
 };
 
-}
+}  // namespace tinyrpc
 #endif

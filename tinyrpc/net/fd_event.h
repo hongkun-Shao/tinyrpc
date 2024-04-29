@@ -1,52 +1,48 @@
 #ifndef TINYRPC_TOOL_FD_EVENT_H
 #define TINYRPC_TOOL_FD_EVENT_H
 
-#include <functional>
 #include <sys/epoll.h>
 
-namespace tinyrpc{
+#include <functional>
 
-class FdEvent{
-public:
-    enum TriggerEvent{
-        IN_EVENT = EPOLLIN,
-        OUT_EVENT = EPOLLOUT,
-        ERROR_EVENT = EPOLLERR,
-    };
+namespace tinyrpc {
 
-    FdEvent(int fd);
+class FdEvent {
+ public:
+  enum TriggerEvent {
+    IN_EVENT = EPOLLIN,
+    OUT_EVENT = EPOLLOUT,
+    ERROR_EVENT = EPOLLERR,
+  };
 
-    FdEvent();
-    
-    virtual ~FdEvent();
+  FdEvent(int fd);
 
-    void SetNonBlock();
-    
-    std::function<void()> Handler(TriggerEvent event_type);
-    
-    void Listen(TriggerEvent event_type, std::function<void()> callback,
-                std::function<void()> error_callback = nullptr);
+  FdEvent();
 
-    //cancle listen
-    void Cancle(TriggerEvent event_type);
+  virtual ~FdEvent();
 
-    int get_fd() const{
-        return m_fd_;
-    }
-    epoll_event get_epoll_event(){
-        return m_listen_events_;
-    }
-    
-protected:
-    int m_fd_ {-1};
-    epoll_event m_listen_events_;
+  void SetNonBlock();
 
-    std::function<void()> m_read_callback_ {nullptr};
-    std::function<void()> m_write_callback_ {nullptr};
-    std::function<void()> m_error_callback_ {nullptr};
+  std::function<void()> Handler(TriggerEvent event_type);
+
+  void Listen(TriggerEvent event_type, std::function<void()> callback,
+              std::function<void()> error_callback = nullptr);
+
+  // cancle listen
+  void Cancle(TriggerEvent event_type);
+
+  int get_fd() const { return m_fd_; }
+  epoll_event get_epoll_event() { return m_listen_events_; }
+
+ protected:
+  int m_fd_{-1};
+  epoll_event m_listen_events_;
+
+  std::function<void()> m_read_callback_{nullptr};
+  std::function<void()> m_write_callback_{nullptr};
+  std::function<void()> m_error_callback_{nullptr};
 };
 
-
-}
+}  // namespace tinyrpc
 
 #endif

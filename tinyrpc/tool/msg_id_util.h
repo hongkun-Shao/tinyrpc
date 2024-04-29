@@ -3,13 +3,13 @@
 
 #include <string>
 
-namespace tinyrpc{
+namespace tinyrpc {
 
-class MsgIDUtil{
-public:
-    static std::string GetMsgID();
+class MsgIDUtil {
+ public:
+  static std::string GetMsgID();
 };
 
-}
+}  // namespace tinyrpc
 
 #endif

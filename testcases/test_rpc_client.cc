@@ -117,6 +117,7 @@ int main() {
   tinyrpc::Logger::InitGlobalLogger(0);
 
   //test_tcp_client();
+  INFOLOG("Start test_rpc_channel");
   test_rpc_channel();
   INFOLOG("test_rpc_channel end");
 

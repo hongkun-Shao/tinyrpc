@@ -4,45 +4,35 @@
 #include <functional>
 #include <memory>
 
-namespace tinyrpc{
+namespace tinyrpc {
 
-class TimerEvent{
-public:
-    typedef std::shared_ptr<TimerEvent> s_ptr;
+class TimerEvent {
+ public:
+  typedef std::shared_ptr<TimerEvent> s_ptr;
 
-    TimerEvent(int interval, bool repeat_flag, std::function<void()> cb);
+  TimerEvent(int interval, bool repeat_flag, std::function<void()> cb);
 
-    int64_t get_arrive_time() const {
-        return m_arrive_time_;
-    }
+  int64_t get_arrive_time() const { return m_arrive_time_; }
 
-    void set_cancle(bool value){
-        m_cancle_flag_ = value;
-    }
+  void set_cancle(bool value) { m_cancle_flag_ = value; }
 
-    bool IsCancle(){
-        return m_cancle_flag_;
-    }
+  bool IsCancle() { return m_cancle_flag_; }
 
-    bool IsRepeat(){
-        return m_repeat_flag_;
-    }
+  bool IsRepeat() { return m_repeat_flag_; }
 
-    std::function<void()> get_task(){
-        return m_task_;
-    }
+  std::function<void()> get_task() { return m_task_; }
 
-    void ResetArriveTime();
+  void ResetArriveTime();
 
-private:
-    int64_t m_arrive_time_;         // ms
-    int64_t m_interval_;            // ms
-    bool m_repeat_flag_ {false};
-    bool m_cancle_flag_ {false};
+ private:
+  int64_t m_arrive_time_;  // ms
+  int64_t m_interval_;     // ms
+  bool m_repeat_flag_{false};
+  bool m_cancle_flag_{false};
 
-    std::function<void()> m_task_;   // task of timer event
+  std::function<void()> m_task_;  // task of timer event
 };
 
-}
+}  // namespace tinyrpc
 
 #endif
