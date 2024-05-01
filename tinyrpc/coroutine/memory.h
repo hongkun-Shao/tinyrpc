@@ -29,7 +29,7 @@ class Memory {
 
   void backBlock(char* s);
 
-  void hasBlock(char* s);
+  bool hasBlock(char* s);
 
  private:
   int block_size_{0};
@@ -38,8 +38,8 @@ class Memory {
   // total_size_ = block_size * block_count
   int total_size_{0};
 
-  char* m_start{nullptr};
-  char* m_end{nullptr};
+  char* start_ptr_{nullptr};
+  char* end_ptr_{nullptr};
 
   std::atomic<int> ref_counts_{0};
   std::vector<bool> blocks_;

@@ -1,27 +1,24 @@
-#include <sys/time.h>
-#include <sstream>
-#include <stdio.h>
-#include <assert.h>
 #include "tinyrpc/tool/log.h"
-#include "tinyrpc/tool/util.h"
-#include "tinyrpc/tool/config.h"
+
+#include <assert.h>
+#include <stdio.h>
+#include <sys/time.h>
+
+#include <sstream>
+
 #include "tinyrpc/net/eventloop.h"
+#include "tinyrpc/tool/config.h"
 #include "tinyrpc/tool/run_time.h"
-
-
-
+#include "tinyrpc/tool/util.h"
 
 namespace tinyrpc {
 
 static Logger* g_logger = NULL;
 
-Logger* Logger::GetGlobalLogger() {
-  return g_logger;
-}
+Logger* Logger::GetGlobalLogger() { return g_logger; }
 
-
-Logger::Logger(LogLevel level, int type /*=1*/) : m_set_level(level), m_type(type) {
-
+Logger::Logger(LogLevel level, int type /*=1*/)
+    : m_set_level(level), m_type(type) {
   if (m_type == 0) {
     return;
   }
@@ -29,22 +26,22 @@ Logger::Logger(LogLevel level, int type /*=1*/) : m_set_level(level), m_type(typ
       Config::GetGlobalConfig()->m_log_file_name + "_rpc",
       Config::GetGlobalConfig()->m_log_file_path,
       Config::GetGlobalConfig()->m_log_max_file_size);
-  
+
   m_asnyc_app_logger = std::make_shared<AsyncLogger>(
       Config::GetGlobalConfig()->m_log_file_name + "_app",
       Config::GetGlobalConfig()->m_log_file_path,
       Config::GetGlobalConfig()->m_log_max_file_size);
 }
 
-
 void Logger::init() {
   if (m_type == 0) {
     return;
   }
-  m_timer_event = std::make_shared<TimerEvent>(Config::GetGlobalConfig()->m_log_sync_inteval, true, std::bind(&Logger::syncLoop, this));
+  m_timer_event = std::make_shared<TimerEvent>(
+      Config::GetGlobalConfig()->m_log_sync_inteval, true,
+      std::bind(&Logger::syncLoop, this));
   EventLoop::GetCurrentEventLoop()->AddTimerEvent(m_timer_event);
 }
-
 
 void Logger::syncLoop() {
   // 同步 m_buffer 到 async_logger 的buffer队尾
@@ -68,36 +65,30 @@ void Logger::syncLoop() {
   if (!tmp_vec2.empty()) {
     m_asnyc_app_logger->pushLogBuffer(tmp_vec2);
   }
-
 }
 
-
 void Logger::InitGlobalLogger(int type /*=1*/) {
-
-  LogLevel global_log_level = StringToLogLevel(Config::GetGlobalConfig()->m_log_level);
+  LogLevel global_log_level =
+      StringToLogLevel(Config::GetGlobalConfig()->m_log_level);
   printf("Init log level [%s]\n", LogLevelToString(global_log_level).c_str());
   g_logger = new Logger(global_log_level, type);
   g_logger->init();
-
 }
-
-
 
 std::string LogLevelToString(LogLevel level) {
   switch (level) {
-  case Debug:
-    return "DEBUG";
+    case Debug:
+      return "DEBUG";
 
-  case Info:
-    return "INFO";
+    case Info:
+      return "INFO";
 
-  case Error:
-    return "ERROR";
-  default:
-    return "UNKNOWN";
+    case Error:
+      return "ERROR";
+    default:
+      return "UNKNOWN";
   }
 }
-
 
 LogLevel StringToLogLevel(const std::string& log_level) {
   if (log_level == "DEBUG") {
@@ -125,15 +116,14 @@ std::string LogEvent::toString() {
   int ms = now_time.tv_usec / 1000;
   time_str = time_str + "." + std::to_string(ms);
 
-
   m_pid = GetPid();
   m_thread_id = GetThreadId();
 
   std::stringstream ss;
 
   ss << "[" << LogLevelToString(m_level) << "]\t"
-    << "[" << time_str << "]\t"
-    << "[" << m_pid << ":" << m_thread_id << "]\t";
+     << "[" << time_str << "]\t"
+     << "[" << m_pid << ":" << m_thread_id << "]\t";
 
   // 获取当前线程处理的请求的 msgid
 
@@ -148,8 +138,6 @@ std::string LogEvent::toString() {
   }
   return ss.str();
 }
-
-
 
 void Logger::pushLog(const std::string& msg) {
   if (m_type == 0) {
@@ -167,15 +155,13 @@ void Logger::pushAppLog(const std::string& msg) {
   lock.unlock();
 }
 
+void Logger::log() {}
 
-void Logger::log() {
-  
-}
-
-
-AsyncLogger::AsyncLogger(const std::string& file_name, const std::string& file_path, int max_size) 
-  : m_file_name(file_name), m_file_path(file_path), m_max_file_size(max_size) {
-  
+AsyncLogger::AsyncLogger(const std::string& file_name,
+                         const std::string& file_path, int max_size)
+    : m_file_name(file_name),
+      m_file_path(file_path),
+      m_max_file_size(max_size) {
   sem_init(&m_sempahore, 0, 0);
 
   assert(pthread_create(&m_thread, NULL, &AsyncLogger::Loop, this) == 0);
@@ -183,22 +169,21 @@ AsyncLogger::AsyncLogger(const std::string& file_name, const std::string& file_p
   // assert(pthread_cond_init(&m_condtion, NULL) == 0);
 
   sem_wait(&m_sempahore);
-
 }
 
-
 void* AsyncLogger::Loop(void* arg) {
-  // 将 buffer 里面的全部数据打印到文件中，然后线程睡眠，直到有新的数据再重复这个过程
+  // 将 buffer
+  // 里面的全部数据打印到文件中，然后线程睡眠，直到有新的数据再重复这个过程
 
-  AsyncLogger* logger = reinterpret_cast<AsyncLogger*>(arg); 
+  AsyncLogger* logger = reinterpret_cast<AsyncLogger*>(arg);
 
   assert(pthread_cond_init(&logger->m_condtion, NULL) == 0);
 
   sem_post(&logger->m_sempahore);
 
-  while(1) {
+  while (1) {
     Locker<Mutex> lock(logger->m_mutex);
-    while(logger->m_buffer.empty()) {
+    while (logger->m_buffer.empty()) {
       // printf("begin pthread_cond_wait back \n");
       pthread_cond_wait(&(logger->m_condtion), logger->m_mutex.getMutex());
     }
@@ -215,7 +200,7 @@ void* AsyncLogger::Loop(void* arg) {
 
     struct tm now_time;
     localtime_r(&(now.tv_sec), &now_time);
-    
+
     const char* format = "%Y%m%d";
     char date[32];
     strftime(date, sizeof(date), format, &now_time);
@@ -230,8 +215,8 @@ void* AsyncLogger::Loop(void* arg) {
     }
 
     std::stringstream ss;
-    ss << logger->m_file_path << logger->m_file_name << "_"
-      << std::string(date) << "_log.";
+    ss << logger->m_file_path << logger->m_file_name << "_" << std::string(date)
+       << "_log.";
     std::string log_file_name = ss.str() + std::to_string(logger->m_no);
 
     if (logger->m_reopen_flag) {
@@ -248,7 +233,6 @@ void* AsyncLogger::Loop(void* arg) {
       log_file_name = ss.str() + std::to_string(logger->m_no++);
       logger->m_file_hanlder = fopen(log_file_name.c_str(), "a");
       logger->m_reopen_flag = false;
-
     }
 
     for (auto& i : tmp) {
@@ -266,10 +250,7 @@ void* AsyncLogger::Loop(void* arg) {
   return NULL;
 }
 
-
-void AsyncLogger::stop() {
-  m_stop_flag = true;
-}
+void AsyncLogger::stop() { m_stop_flag = true; }
 
 void AsyncLogger::flush() {
   if (m_file_hanlder) {
@@ -288,4 +269,4 @@ void AsyncLogger::pushLogBuffer(std::vector<std::string>& vec) {
   // printf("pthread_cond_signal\n");
 }
 
-}
+}  // namespace tinyrpc

@@ -3,8 +3,7 @@
 
 namespace tinyrpc {
 
-
-thread_local RunTime* t_run_time = NULL; 
+thread_local RunTime* t_run_time = NULL;
 
 RunTime* RunTime::GetRunTime() {
   if (t_run_time) {
@@ -14,5 +13,4 @@ RunTime* RunTime::GetRunTime() {
   return t_run_time;
 }
 
-
-}
+}  // namespace tinyrpc

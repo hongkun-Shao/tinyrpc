@@ -1,8 +1,9 @@
-#include "tinyrpc/tool/log.h"
-#include "tinyrpc/tool/mutex.h"
 #include "tinyrpc/net/fd_event_pool.h"
 
-namespace tinyrpc{
+#include "tinyrpc/tool/log.h"
+#include "tinyrpc/tool/mutex.h"
+
+namespace tinyrpc {
 
 static FdEventPool* g_fd_event_pool = nullptr;
 
@@ -15,7 +16,7 @@ FdEventPool* FdEventPool::get_fd_event_pool() {
   return g_fd_event_pool;
 }
 
-FdEventPool::FdEventPool(int size) :m_size_(size) {
+FdEventPool::FdEventPool(int size) : m_size_(size) {
   for (int i = 0; i < m_size_; i++) {
     m_fd_pool_.push_back(new FdEvent(i));
   }
@@ -32,7 +33,7 @@ FdEventPool::~FdEventPool() {
 
 FdEvent* FdEventPool::get_fd_event(int fd) {
   Locker<Mutex> lock(m_mutex_);
-  if ((size_t) fd < m_fd_pool_.size()) {
+  if ((size_t)fd < m_fd_pool_.size()) {
     return m_fd_pool_[fd];
   }
 
@@ -41,6 +42,5 @@ FdEvent* FdEventPool::get_fd_event(int fd) {
     m_fd_pool_.push_back(new FdEvent(i));
   }
   return m_fd_pool_[fd];
-
-}  
 }
+}  // namespace tinyrpc
